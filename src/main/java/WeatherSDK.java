@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WeatherSDK {
     private static final String API_URL = "https://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s&units=metric";
-    private static final int CACHE_EXPIRY_MINUTES = 1;
+    private static final int CACHE_EXPIRY_MINUTES = 10;
     private static final int MAX_CACHED_CITIES = 10;
 
     private final String apiKey;
