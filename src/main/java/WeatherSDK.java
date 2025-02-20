@@ -21,6 +21,8 @@ public class WeatherSDK {
     private final Map<String, CachedWeather> cache = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    private static final Map<String, WeatherSDK> instances = new ConcurrentHashMap<>();
+
     public enum Mode {
         ON_DEMAND, POLLING
     }
@@ -34,6 +36,17 @@ public class WeatherSDK {
 
         if (mode == Mode.POLLING) {
             scheduler.scheduleAtFixedRate(this::refreshCache, 0, CACHE_EXPIRY_MINUTES, TimeUnit.MINUTES);
+        }
+    }
+
+    public static synchronized WeatherSDK getInstance(String apiKey, Mode mode) {
+        return instances.computeIfAbsent(apiKey, k -> new WeatherSDK(apiKey, mode));
+    }
+
+    public static synchronized void removeInstance(String apiKey) {
+        WeatherSDK instance = instances.remove(apiKey);
+        if (instance != null) {
+            instance.shutdown();
         }
     }
 
